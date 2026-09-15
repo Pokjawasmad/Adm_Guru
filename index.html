@@ -305,6 +305,7 @@
                     <input type="text" id="namaGuru" placeholder="Nama Guru" class="form-input w-full rounded-xl px-4 py-2.5 text-sm font-medium placeholder:text-gray-400" required>
                     <input type="text" id="mapelGuru" placeholder="Mata Pelajaran" class="form-input w-full rounded-xl px-4 py-2.5 text-sm font-medium placeholder:text-gray-400" required>
                     <input type="text" id="madrasahGuru" placeholder="Nama Madrasah" class="form-input w-full rounded-xl px-4 py-2.5 text-sm font-medium placeholder:text-gray-400" required>
+                    <input type="text" id="pengawasGuru" placeholder="Nama Pengawas Pembina" class="form-input w-full rounded-xl px-4 py-2.5 text-sm font-medium placeholder:text-gray-400" required>
                 </div>
 
                 <div id="pengawasFields" class="hidden space-y-2">
@@ -708,50 +709,8 @@
                     <p class="text-xs text-gray-500 mt-1">Pilih madrasah untuk memantau kelengkapan administrasi guru.</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Kartu Madrasah 1 -->
-                    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow p-5 cursor-pointer group" onclick="bukaDaftarGuru('MTsN 1 Kuningan')">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-gray-800 text-lg">MTsN 1 Kuningan</h3>
-                                <p class="text-[11px] font-medium text-emerald-600">Total: 24 Guru</p>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-[10px] font-bold text-gray-500 mb-1.5 uppercase">
-                                <span>Rata-rata Kelengkapan</span>
-                                <span class="text-emerald-600">78%</span>
-                            </div>
-                            <div class="w-full bg-gray-100 rounded-full h-2">
-                                <div class="bg-emerald-500 h-2 rounded-full" style="width: 78%"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Kartu Madrasah 2 -->
-                    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow p-5 cursor-pointer group" onclick="bukaDaftarGuru('MIN 2 Kuningan')">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-gray-800 text-lg">MIN 2 Kuningan</h3>
-                                <p class="text-[11px] font-medium text-emerald-600">Total: 15 Guru</p>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-[10px] font-bold text-gray-500 mb-1.5 uppercase">
-                                <span>Rata-rata Kelengkapan</span>
-                                <span class="text-amber-500">62%</span>
-                            </div>
-                            <div class="w-full bg-gray-100 rounded-full h-2">
-                                <div class="bg-amber-400 h-2 rounded-full" style="width: 62%"></div>
-                            </div>
-                        </div>
-                    </div>
+                <div id="grid-madrasah" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <p class="text-sm text-gray-400 italic">Memuat daftar madrasah binaan...</p>
                 </div>
             </div>
 
@@ -782,43 +741,8 @@
                                     <th class="p-4 font-bold border-b border-gray-200 text-right">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody class="text-sm divide-y divide-gray-100">
-                                <!-- Guru 1 -->
-                                <tr class="hover:bg-emerald-50/50 transition-colors">
-                                    <td class="p-4 font-bold text-gray-800 flex items-center gap-3">
-                                        <img src="https://ui-avatars.com/api/?name=Budi+Santoso&background=f3f4f6" class="w-8 h-8 rounded-full">
-                                        Budi Santoso, S.Pd
-                                    </td>
-                                    <td class="p-4 text-gray-600 text-xs font-semibold">Matematika / VII</td>
-                                    <td class="p-4 text-center"><span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-bold">95%</span></td>
-                                    <td class="p-4 text-center"><span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-bold">100%</span></td>
-                                    <td class="p-4 text-center"><span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-[10px] font-bold">60%</span></td>
-                                    <td class="p-4 text-center"><span class="bg-red-100 text-red-700 px-2 py-1 rounded text-[10px] font-bold">20%</span></td>
-                                    <td class="p-4 text-right">
-                                        <button onclick="pantauDashboard('Budi Santoso, S.Pd', 'Matematika / VII', 'MTsN 1 Kuningan')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5 ml-auto">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                            Pantau
-                                        </button>
-                                    </td>
-                                </tr>
-                                <!-- Guru 2 -->
-                                <tr class="hover:bg-emerald-50/50 transition-colors">
-                                    <td class="p-4 font-bold text-gray-800 flex items-center gap-3">
-                                        <img src="https://ui-avatars.com/api/?name=Siti+Aminah&background=f3f4f6" class="w-8 h-8 rounded-full">
-                                        Siti Aminah, M.Pd
-                                    </td>
-                                    <td class="p-4 text-gray-600 text-xs font-semibold">Fiqih / VII</td>
-                                    <td class="p-4 text-center"><span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-bold">100%</span></td>
-                                    <td class="p-4 text-center"><span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-bold">100%</span></td>
-                                    <td class="p-4 text-center"><span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-bold">90%</span></td>
-                                    <td class="p-4 text-center"><span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-bold">85%</span></td>
-                                    <td class="p-4 text-right">
-                                        <button onclick="pantauDashboard('Siti Aminah, M.Pd', 'Fiqih / VII', 'MTsN 1 Kuningan')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5 ml-auto">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                            Pantau
-                                        </button>
-                                    </td>
-                                </tr>
+                            <tbody id="tbody-guru" class="text-sm divide-y divide-gray-100">
+                                <tr><td colspan="7" class="p-6 text-center text-gray-400 italic text-sm">Memuat daftar guru...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -833,6 +757,28 @@
      SCRIPT: NAVIGASI & LOGIKA TERPUSAT (SPA, tanpa reload)
      ========================================================= -->
 <script>
+    // ---- KONEKSI KE GOOGLE SHEETS (Apps Script Web App) ----
+    // GANTI URL di bawah ini dengan URL Web App hasil Deploy Apps Script Anda (diakhiri /exec)
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwVUTzKAeFDzOA7GHdME2RUJz1Ubigz-0YHDCPbpf4pml6acYwW-4VxQQazaboM1wbd/exec';
+
+    // Panggil endpoint GET, mengembalikan Promise berisi object hasil JSON
+    async function apiGet(params) {
+        const url = API_URL + '?' + new URLSearchParams(params).toString();
+        const res = await fetch(url);
+        return res.json();
+    }
+
+    // Panggil endpoint POST. Content-Type text/plain sengaja dipakai agar
+    // browser tidak mengirim preflight OPTIONS (Apps Script tidak mendukungnya).
+    async function apiPost(body) {
+        const res = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(body)
+        });
+        return res.json();
+    }
+
     // ---- State sesi (in-memory, hilang saat tab ditutup) ----
     let session = { role: null, name: null, mapel: null, madrasah: null };
     let pantauanAktif = false;
@@ -892,7 +838,7 @@
         }
     }
 
-    function handleLogin(event) {
+    async function handleLogin(event) {
         event.preventDefault();
 
         const selectedRole = document.querySelector('#view-login input[name="role"]:checked');
@@ -903,21 +849,47 @@
         }
 
         session.role = selectedRole.value;
+        const tombolMasuk = document.querySelector('#loginForm button[type="submit"]');
+        const teksTombolAsli = tombolMasuk ? tombolMasuk.innerHTML : '';
 
         if (session.role === 'guru') {
             const namaGuru = document.getElementById('namaGuru').value.trim();
             const mapelGuru = document.getElementById('mapelGuru').value.trim();
             const madrasahGuru = document.getElementById('madrasahGuru').value.trim();
+            const pengawasGuru = document.getElementById('pengawasGuru').value.trim();
 
-            if (!namaGuru || !mapelGuru || !madrasahGuru) {
-                alert('Mohon lengkapi Nama Guru, Mata Pelajaran, dan Nama Madrasah.');
+            if (!namaGuru || !mapelGuru || !madrasahGuru || !pengawasGuru) {
+                alert('Mohon lengkapi Nama Guru, Mata Pelajaran, Nama Madrasah, dan Nama Pengawas.');
                 return;
             }
 
             session.name = namaGuru;
             session.mapel = mapelGuru;
             session.madrasah = madrasahGuru;
+            session.pengawas = pengawasGuru;
+
+            try {
+                if (tombolMasuk) { tombolMasuk.innerHTML = 'Menyimpan data...'; tombolMasuk.disabled = true; }
+                const hasilSimpan = await apiPost({
+                    action: 'simpanGuru',
+                    nama: namaGuru,
+                    mapel: mapelGuru,
+                    madrasah: madrasahGuru,
+                    pengawas: pengawasGuru
+                });
+
+                if (hasilSimpan && hasilSimpan.pengawasDikenali === false) {
+                    alert('Data Anda tersimpan, tetapi nama pengawas "' + pengawasGuru + '" belum terdaftar di sistem. Mohon informasikan ke pengawas Anda agar didaftarkan oleh admin, supaya pengawas bisa melihat data Anda.');
+                }
+            } catch (err) {
+                console.error('Gagal menyimpan data guru ke spreadsheet:', err);
+                alert('Data tidak dapat disimpan ke server (periksa koneksi internet Anda). Anda tetap bisa lanjut, namun data tidak akan terlihat oleh pengawas.');
+            } finally {
+                if (tombolMasuk) { tombolMasuk.innerHTML = teksTombolAsli; tombolMasuk.disabled = false; }
+            }
+
             masukSebagaiGuru();
+
         } else if (session.role === 'pengawas') {
             const namaPengawas = document.getElementById('namaPengawas').value.trim();
 
@@ -926,13 +898,29 @@
                 return;
             }
 
+            try {
+                if (tombolMasuk) { tombolMasuk.innerHTML = 'Memeriksa akun...'; tombolMasuk.disabled = true; }
+                const hasil = await apiGet({ action: 'checkPengawas', nama: namaPengawas });
+
+                if (!hasil.valid) {
+                    alert('Nama "' + namaPengawas + '" tidak terdaftar sebagai Pengawas. Silakan hubungi admin Pokjawas untuk didaftarkan.');
+                    return;
+                }
+            } catch (err) {
+                console.error('Gagal memeriksa data pengawas:', err);
+                alert('Tidak dapat menghubungi server untuk validasi (periksa koneksi internet Anda). Coba lagi.');
+                return;
+            } finally {
+                if (tombolMasuk) { tombolMasuk.innerHTML = teksTombolAsli; tombolMasuk.disabled = false; }
+            }
+
             session.name = namaPengawas;
             masukSebagaiPengawas();
         }
     }
 
     function handleLogout() {
-        session = { role: null, name: null, mapel: null, madrasah: null };
+        session = { role: null, name: null, mapel: null, madrasah: null, pengawas: null };
         pantauanAktif = false;
         dokumenData = {};
         guruAktifKey = null;
@@ -1317,7 +1305,7 @@
     }
 
     // ---- VIEW: DASHBOARD PENGAWAS ----
-    function masukSebagaiPengawas() {
+    async function masukSebagaiPengawas() {
         document.getElementById('pengawas-nama-header').innerText = session.name;
         document.getElementById('pengawas-foto-header').src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(session.name) + '&background=047857&color=fff';
 
@@ -1326,12 +1314,92 @@
 
         sembunyikanSemuaView();
         viewPengawas.classList.remove('hidden-view');
+
+        await muatDaftarMadrasah();
     }
 
-    function bukaDaftarGuru(namaMadrasah) {
+    async function muatDaftarMadrasah() {
+        const grid = document.getElementById('grid-madrasah');
+        grid.innerHTML = '<p class="text-sm text-gray-400 italic">Memuat daftar madrasah binaan...</p>';
+
+        try {
+            const hasil = await apiGet({ action: 'getDashboardPengawas', nama: session.name });
+            const daftar = hasil.madrasah || [];
+
+            if (daftar.length === 0) {
+                grid.innerHTML = '<p class="text-sm text-gray-400 italic col-span-full">Belum ada madrasah binaan. Madrasah akan otomatis muncul di sini setelah ada guru yang login dan mencantumkan nama Anda sebagai pengawas.</p>';
+                return;
+            }
+
+            grid.innerHTML = daftar.map(item => `
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow p-5 cursor-pointer group" onclick="bukaDaftarGuru('${escapeAttr(item.madrasah)}')">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-lg">${escapeHtml(item.madrasah)}</h3>
+                            <p class="text-[11px] font-medium text-emerald-600">Total: ${item.jumlahGuru} Guru</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } catch (err) {
+            console.error('Gagal memuat daftar madrasah:', err);
+            grid.innerHTML = '<p class="text-sm text-red-500 italic col-span-full">Gagal memuat data dari server. Periksa koneksi internet Anda lalu coba lagi.</p>';
+        }
+    }
+
+    async function bukaDaftarGuru(namaMadrasah) {
         document.getElementById('panel-madrasah').classList.add('hidden');
         document.getElementById('panel-guru').classList.remove('hidden');
         document.getElementById('judul-madrasah').innerText = "Daftar Guru - " + namaMadrasah;
+
+        const tbody = document.getElementById('tbody-guru');
+        tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-gray-400 italic text-sm">Memuat daftar guru...</td></tr>';
+
+        try {
+            const hasil = await apiGet({ action: 'getGuruByMadrasah', madrasah: namaMadrasah });
+            const daftarGuru = hasil.guru || [];
+
+            if (daftarGuru.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-gray-400 italic text-sm">Belum ada guru dari madrasah ini yang login.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = daftarGuru.map(g => `
+                <tr class="hover:bg-emerald-50/50 transition-colors">
+                    <td class="p-4 font-bold text-gray-800 flex items-center gap-3">
+                        <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(g.nama)}&background=f3f4f6" class="w-8 h-8 rounded-full">
+                        ${escapeHtml(g.nama)}
+                    </td>
+                    <td class="p-4 text-gray-600 text-xs font-semibold">${escapeHtml(g.mapel)}</td>
+                    <td class="p-4 text-center text-gray-300 text-xs">-</td>
+                    <td class="p-4 text-center text-gray-300 text-xs">-</td>
+                    <td class="p-4 text-center text-gray-300 text-xs">-</td>
+                    <td class="p-4 text-center text-gray-300 text-xs">-</td>
+                    <td class="p-4 text-right">
+                        <button onclick="pantauDashboard('${escapeAttr(g.nama)}', '${escapeAttr(g.mapel)}', '${escapeAttr(g.madrasah)}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5 ml-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                            Pantau
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        } catch (err) {
+            console.error('Gagal memuat daftar guru:', err);
+            tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-red-500 italic text-sm">Gagal memuat data dari server.</td></tr>';
+        }
+    }
+
+    // ---- Utilitas keamanan tampilan (hindari XSS dari nama yang mengandung karakter HTML) ----
+    function escapeHtml(teks) {
+        const div = document.createElement('div');
+        div.innerText = teks == null ? '' : String(teks);
+        return div.innerHTML;
+    }
+    function escapeAttr(teks) {
+        return escapeHtml(teks).replace(/'/g, '&#39;');
     }
 
     function kembaliKeMadrasah() {
