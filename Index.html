@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APP Guru Madrasah - Pokjawas Kuningan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        html, body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+        .hidden-view { display: none !important; }
+
+        /* ===== LOGIN VIEW ===== */
+        #view-login {
+            background-color: #0b1f18;
+        }
+        .welcome-card {
+            background: linear-gradient(135deg, #1b4d3e 0%, #0f2e24 100%);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, #f59e0b 0%, #eab308 50%, #d97706 100%);
+            box-shadow: 0 4px 15px rgba(234, 179, 8, 0.4);
+            transition: all 0.3s ease;
+        }
+        .btn-gold:hover {
+            box-shadow: 0 6px 20px rgba(234, 179, 8, 0.7);
+            transform: translateY(-2px);
+        }
+        .guru-image {
+            filter: drop-shadow(0 8px 12px rgba(0,0,0,0.3));
+        }
+        .role-option {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .role-option:hover {
+            transform: scale(1.02);
+        }
+        .role-option.active {
+            border-color: #f59e0b !important;
+            background: rgba(245, 158, 11, 0.1) !important;
+        }
+        .role-option input[type="radio"] {
+            accent-color: #f59e0b;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .role-option input[type="radio"]:checked + .role-label {
+            color: #f59e0b;
+            font-weight: 700;
+        }
+        .form-input {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            border-color: #f59e0b;
+            background: rgba(255,255,255,0.12);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+        }
+        .form-input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* ===== ITEM JENIS DOKUMEN DI DALAM KARTU BUKU KERJA 1-4 (dashboard) ===== */
+        /* Warna hanya muncul SAAT disentuh/hover, lalu kembali normal begitu dilepas/diklik */
+        .doc-pick-item {
+            position: relative;
+            border-left: 3px solid transparent;
+            -webkit-tap-highlight-color: transparent;
+            transition: transform 0.15s ease, background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .doc-pick-item:hover { transform: translateX(2px); }
+        .doc-pick-item:active { transform: scale(0.97); }
+        .doc-label { transition: color 0.2s ease, font-weight 0.2s ease; }
+
+        ul[data-color="emerald"] .doc-pick-item:hover { background: #ecfdf5; border-left-color: #10b981; }
+        ul[data-color="emerald"] .doc-pick-item:hover .doc-label { color: #047857; font-weight: 700; }
+        ul[data-color="emerald"] .doc-pick-item.pulse-anim { animation: docPulseEmerald 0.5s ease-out; }
+        @keyframes docPulseEmerald {
+            0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.45); }
+            100% { box-shadow: 0 0 0 8px rgba(16,185,129,0); }
+        }
+
+        ul[data-color="blue"] .doc-pick-item:hover { background: #eff6ff; border-left-color: #3b82f6; }
+        ul[data-color="blue"] .doc-pick-item:hover .doc-label { color: #1d4ed8; font-weight: 700; }
+        ul[data-color="blue"] .doc-pick-item.pulse-anim { animation: docPulseBlue 0.5s ease-out; }
+        @keyframes docPulseBlue {
+            0% { box-shadow: 0 0 0 0 rgba(59,130,246,0.45); }
+            100% { box-shadow: 0 0 0 8px rgba(59,130,246,0); }
+        }
+
+        ul[data-color="amber"] .doc-pick-item:hover { background: #fffbeb; border-left-color: #f59e0b; }
+        ul[data-color="amber"] .doc-pick-item:hover .doc-label { color: #b45309; font-weight: 700; }
+        ul[data-color="amber"] .doc-pick-item.pulse-anim { animation: docPulseAmber 0.5s ease-out; }
+        @keyframes docPulseAmber {
+            0% { box-shadow: 0 0 0 0 rgba(245,158,11,0.45); }
+            100% { box-shadow: 0 0 0 8px rgba(245,158,11,0); }
+        }
+
+        ul[data-color="purple"] .doc-pick-item:hover { background: #f5f3ff; border-left-color: #8b5cf6; }
+        ul[data-color="purple"] .doc-pick-item:hover .doc-label { color: #6d28d9; font-weight: 700; }
+        ul[data-color="purple"] .doc-pick-item.pulse-anim { animation: docPulsePurple 0.5s ease-out; }
+        @keyframes docPulsePurple {
+            0% { box-shadow: 0 0 0 0 rgba(139,92,246,0.45); }
+            100% { box-shadow: 0 0 0 8px rgba(139,92,246,0); }
+        }
+
+        /* ===== PILIHAN BUKU KERJA (kotak animasi di modal upload) ===== */
+        .buku-pick-card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 3px;
+            padding: 14px 8px;
+            border-radius: 14px;
+            border: 2px solid #e5e7eb;
+            background: #f9fafb;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            transition: transform 0.18s cubic-bezier(.34,1.56,.64,1), box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+        }
+        .buku-pick-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px -6px rgba(0,0,0,0.15);
+        }
+        .buku-pick-card:active {
+            transform: scale(0.92);
+        }
+        .buku-pick-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+        .buku-pick-icon svg { width: 20px; height: 20px; }
+        .buku-pick-title {
+            font-size: 10.5px;
+            font-weight: 800;
+            color: #374151;
+            letter-spacing: .02em;
+            transition: color 0.2s ease;
+        }
+        .buku-pick-sub {
+            font-size: 9px;
+            color: #9ca3af;
+            font-weight: 600;
+        }
+        .buku-pick-check {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            opacity: 0;
+            transform: scale(0) rotate(-45deg);
+            transition: all 0.3s cubic-bezier(.34,1.56,.64,1);
+        }
+        .buku-pick-check svg { width: 11px; height: 11px; }
+        .buku-pick-card.selected {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px -8px rgba(0,0,0,0.25);
+        }
+        .buku-pick-card.selected .buku-pick-check {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+        .buku-pick-card.selected .buku-pick-title { color: var(--buku-color-dark, #111827); }
+        .buku-pick-card.selected .buku-pick-icon { background: var(--buku-color, #10b981); color: white; }
+        .buku-pick-card.selected { border-color: var(--buku-color, #10b981); background: var(--buku-color-tint, #ecfdf5); }
+        @keyframes bukuSelectPulse {
+            0% { box-shadow: 0 0 0 0 var(--buku-color-fade, rgba(16,185,129,0.5)); }
+            100% { box-shadow: 0 0 0 12px rgba(16,185,129,0); }
+        }
+        .buku-pick-card.pulse-anim::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 16px;
+            animation: bukuSelectPulse 0.55s ease-out;
+            pointer-events: none;
+        }
+
+        .jenis-pick-pill {
+            padding: 7px 13px;
+            border-radius: 10px;
+            border: 1.5px solid #e5e7eb;
+            background: #ffffff;
+            font-size: 11px;
+            font-weight: 700;
+            color: #4b5563;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            transition: transform 0.15s cubic-bezier(.34,1.56,.64,1), box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+        .jenis-pick-pill:hover { border-color: #9ca3af; background: #f3f4f6; }
+        .jenis-pick-pill:active { transform: scale(0.9); }
+        .jenis-pick-pill.selected {
+            color: #ffffff;
+            transform: scale(1.06);
+            box-shadow: 0 6px 14px -4px rgba(0,0,0,0.3);
+        }
+        #jenisDokumenWrapper {
+            animation: fadeSlideIn 0.25s ease;
+        }
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== DASHBOARD VIEWS (shared) ===== */
+        .dash-body {
+            background-color: #f3f4f6;
+        }
+        .dash-scroll::-webkit-scrollbar { width: 6px; }
+        .dash-scroll::-webkit-scrollbar-track { background: transparent; }
+        .dash-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dash-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="h-screen w-screen text-gray-800">
+
+<!-- =========================================================
+     VIEW 1: LOGIN
+     ========================================================= -->
+<div id="view-login" class="h-screen w-screen flex items-center justify-center p-2 relative">
+
+    <div class="welcome-card border border-emerald-600/30 rounded-[2rem] w-full max-w-[420px] p-5 md:p-7 text-center text-white relative z-10 flex flex-col max-h-[98vh]">
+
+        <div class="absolute -top-16 -left-16 w-32 h-32 bg-emerald-400/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="absolute -bottom-16 -right-16 w-32 h-32 bg-teal-300/10 rounded-full blur-2xl pointer-events-none"></div>
+
+        <div>
+            <div class="flex justify-center items-center gap-4 mb-3">
+                <div class="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-md border border-white/20 p-1">
+                    <img src="Logo Kemenag.png" alt="Logo Kemenag" class="w-full h-full object-contain" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/f/f2/Lambang_Kementerian_Agama.svg'" />
+                </div>
+                <div class="w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-md border border-white/20 p-1">
+                    <img src="Logo.ico" alt="Logo Pokjawas" class="w-full h-full object-contain" onerror="this.style.display='none'" />
+                </div>
+            </div>
+
+            <h1 class="text-2xl font-black tracking-tight text-white mb-1">APP GURU MADRASAH</h1>
+            <p class="text-emerald-300 text-[10px] font-bold tracking-widest mb-1.5 uppercase">SELAMAT DATANG, BAPAK/IBU GURU HEBAT!</p>
+            <p class="text-gray-200 text-[11px] mb-2 px-1 leading-snug">
+                Aplikasi Administrasi Guru Terintegrasi<br>
+                <span class="font-semibold text-amber-300">(Buku Kerja 1 - 4)</span>
+            </p>
+
+            <div class="my-2 flex flex-col items-center justify-center relative">
+                <img src="guru.png" alt="Ilustrasi Guru Madrasah" class="guru-image w-full max-w-[200px] max-h-[170px] object-contain z-10 relative" onerror="this.style.display='none'"/>
+                <div class="w-full bg-white/10 rounded-full h-1 mt-1 max-w-[150px]">
+                    <div class="bg-amber-400 h-1 rounded-full w-4/5 mx-auto"></div>
+                </div>
+                <span class="text-[10px] text-emerald-200 font-medium tracking-wide mt-1.5"></span>
+            </div>
+        </div>
+
+        <!-- FORM LOGIN -->
+        <div class="mt-2">
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
+                <!-- Pilihan Role -->
+                <div class="flex gap-3">
+                    <label class="role-option flex-1 bg-white/5 border-2 border-white/10 rounded-xl p-3 text-center transition-all active" onclick="selectRole('guru')">
+                        <input type="radio" name="role" value="guru" checked class="hidden">
+                        <span class="role-label text-white text-xs font-bold block">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto mb-1 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                            MASUK SEBAGAI<br><span class="text-emerald-300 text-[10px]">GURU</span>
+                        </span>
+                    </label>
+                    <label class="role-option flex-1 bg-white/5 border-2 border-white/10 rounded-xl p-3 text-center transition-all" onclick="selectRole('pengawas')">
+                        <input type="radio" name="role" value="pengawas" class="hidden">
+                        <span class="role-label text-white text-xs font-bold block">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto mb-1 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                            MASUK SEBAGAI<br><span class="text-amber-300 text-[10px]">PENGAWAS</span>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Input Data sesuai peran yang dipilih -->
+                <div id="guruFields" class="space-y-2">
+                    <input type="text" id="namaGuru" placeholder="Nama Guru" class="form-input w-full rounded-xl px-4 py-2.5 text-sm font-medium placeholder:text-gray-400" required>
+                    <input type="text" id="mapelGuru" placeholder="Mata Pelajaran" class="form-input w-full rounded-xl px-4 py-2.5 text-sm font-medium placeholder:text-gray-400" required>
+                    <input type="text" id="madrasahGuru" placeholder="Nama Madrasah" class="form-input w-full rounded-xl px-4 py-2.5 text-sm font-medium placeholder:text-gray-400" required>
+                </div>
+
+                <div id="pengawasFields" class="hidden space-y-2">
+                    <input type="text" id="namaPengawas" placeholder="Nama Pengawas" class="form-input w-full rounded-xl px-4 py-2.5 text-sm font-medium placeholder:text-gray-400" required>
+                </div>
+
+                <button type="submit" class="btn-gold block w-full py-2.5 px-6 text-emerald-950 font-black rounded-xl text-xs tracking-widest uppercase">
+                    MASUK KE DASHBOARD
+                </button>
+            </form>
+
+            <div class="border-t border-white/10 pt-2.5 mt-2.5">
+                <p class="text-[10px] font-black tracking-[0.15em] text-amber-300 uppercase mb-0.5">POKJAWAS MADRASAH</p>
+                <p class="text-[9px] font-medium text-gray-300 tracking-wider">KANTOR KEMENTERIAN AGAMA KAB. KUNINGAN</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- =========================================================
+     VIEW 2: DASHBOARD GURU
+     ========================================================= -->
+<div id="view-guru" class="hidden-view dash-body h-screen w-full flex overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <aside class="w-16 md:w-20 bg-white border-r border-gray-200 flex flex-col items-center py-6 shadow-sm z-20 shrink-0">
+        <div class="w-10 h-10">
+            <img src="Logo Kemenag.png" alt="Logo" class="w-full h-full object-contain" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/f/f2/Lambang_Kementerian_Agama.svg'">
+        </div>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <main class="flex-1 flex flex-col h-screen relative">
+
+        <!-- Banner Mode Pantauan (hanya tampil saat diakses dari dashboard Pengawas) -->
+        <div id="pengawasBanner" class="hidden-view bg-amber-400 text-amber-950 text-xs font-bold text-center py-1.5 uppercase tracking-widest shrink-0">
+            Mode Pantauan &mdash; Anda sedang melihat dashboard guru sebagai Pengawas
+        </div>
+
+        <!-- HEADER -->
+        <header class="bg-white h-20 border-b border-gray-200 px-6 flex items-center justify-between shrink-0 shadow-sm relative z-10">
+            <div class="flex items-center gap-6 divide-x divide-gray-200">
+                <div class="flex items-center gap-3">
+                    <div class="relative group cursor-pointer" onclick="document.getElementById('photo-upload').click()" title="Klik untuk ubah foto">
+                        <img id="profile-pic" src="https://ui-avatars.com/api/?name=Guru&background=10b981&color=fff" alt="User" class="w-11 h-11 rounded-full object-cover border-2 border-transparent group-hover:border-emerald-500 transition duration-300">
+                        <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        </div>
+                        <input type="file" id="photo-upload" class="hidden" accept="image/*" onchange="previewImage(event)">
+                    </div>
+                    <div>
+                        <h2 id="guru-nama-header" class="text-sm font-bold text-gray-800">Anang Maulana</h2>
+                        <p id="guru-jabatan-header" class="text-[11px] text-gray-500">Guru Mata Pelajaran</p>
+                    </div>
+                </div>
+
+                <div class="px-6 hidden md:block">
+                    <p class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-0.5">Mata Pelajaran / Kelas</p>
+                    <p id="guru-mapel-header" class="text-xs font-semibold text-gray-700">Ilmu Pengetahuan Alam (IPA)</p>
+                </div>
+
+                <div class="px-6 hidden lg:block">
+                    <p class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-0.5">Asal Madrasah</p>
+                    <p id="guru-madrasah-header" class="text-xs font-semibold text-gray-700">MTs Tara Bakti</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a id="btnKembaliPengawas" href="#" onclick="kembaliKePengawas(); return false;" class="hidden-view text-xs font-semibold text-emerald-600 hover:text-emerald-800 flex items-center gap-1 bg-white px-4 py-2.5 rounded-lg border border-gray-200 shadow-sm transition-all hover:bg-emerald-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                    Kembali ke Daftar Guru
+                </a>
+                <a id="btnKeluarGuru" href="#" onclick="handleLogout(); return false;" class="text-xs font-semibold text-red-500 hover:text-red-700 flex items-center gap-1 bg-white px-4 py-2.5 rounded-lg border border-gray-200 shadow-sm transition-all hover:bg-red-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                    Keluar
+                </a>
+            </div>
+        </header>
+
+        <!-- CONTENT SCROLLABLE -->
+        <div class="dash-scroll flex-1 overflow-y-auto p-6 lg:p-8 bg-gray-50 relative z-0">
+
+            <!-- HEADER KONTEN & TOMBOL -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+                <h1 class="text-lg font-bold text-gray-800 uppercase tracking-wide">PORTFOLIO ADMINISTRASI GURU</h1>
+
+                <div class="flex items-center gap-3">
+                    <button id="btnBuatAdm" onclick="buatAdmSekarang()" class="text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 px-4 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center gap-2 transform hover:-translate-y-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l-3 3m3-3l3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" /></svg>
+                        UPLOAD FILE ADM
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4 COLUMNS CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+
+                <!-- BUKU 1 (GREEN) -->
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col h-[360px]">
+                    <div class="bg-emerald-600 p-4 flex items-center gap-3 text-white">
+                        <div class="bg-white/20 p-2 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm leading-tight">BUKU KERJA 1</h3>
+                            <p class="text-[10px] text-emerald-100">Perangkat Inti</p>
+                        </div>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col">
+                        <div class="flex justify-between items-end mb-3 pb-2 border-b border-gray-100">
+                            <span class="text-xs font-semibold text-gray-500">Status Kelengkapan:</span>
+                        </div>
+
+                        <ul class="text-[11px] text-gray-600 space-y-3 flex-1 overflow-y-auto pr-1" data-color="emerald">
+                            <li class="flex justify-between items-center group cursor-pointer hover:bg-gray-50 rounded-lg px-1.5 -mx-1.5 py-0.5 transition-colors doc-pick-item" data-doc="SK Pembagian Tugas" data-label="SK Pembagian Tugas" onclick="lihatDokumen(this)">
+                                <span class="text-gray-400 truncate doc-label">SK Pembagian Tugas Mengajar</span>
+                                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            </li>
+                            <li class="flex justify-between items-center group cursor-pointer hover:bg-gray-50 rounded-lg px-1.5 -mx-1.5 py-0.5 transition-colors doc-pick-item" data-doc="CP" data-label="Capaian Pembelajaran (CP)" onclick="lihatDokumen(this)">
+                                <span class="text-gray-400 truncate doc-label">Capaian Pembelajaran (CP)</span>
+                                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            </li>
+                            <li class="flex justify-between items-center group cursor-pointer hover:bg-gray-50 rounded-lg px-1.5 -mx-1.5 py-0.5 transition-colors doc-pick-item" data-doc="ATP" data-label="Alur Tujuan Pembelajaran (ATP)" onclick="lihatDokumen(this)">
+                                <span class="text-gray-400 truncate doc-label">Alur Tujuan Pembelajaran (ATP)</span>
+                                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            </li>
+                            <li class="flex justify-between items-center group cursor-pointer hover:bg-gray-50 rounded-lg px-1.5 -mx-1.5 py-0.5 transition-colors doc-pick-item" data-doc="Modul Ajar" data-label="Modul Ajar" onclick="lihatDokumen(this)">
+                                <span class="text-gray-400 truncate doc-label">Modul Ajar</span>
+                                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            </li>
+                            <li class="flex justify-between items-center group cursor-pointer hover:bg-gray-50 rounded-lg px-1.5 -mx-1.5 py-0.5 transition-colors doc-pick-item" data-doc="KKTP" data-label="KKTP / KKM" onclick="lihatDokumen(this)">
+                                <span class="text-gray-400 truncate doc-label">KKTP / KKM</span>
+                                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- BUKU 2 (BLUE) -->
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col h-[360px]">
+                    <div class="bg-blue-500 p-4 flex items-center gap-3 text-white">
+                        <div class="bg-white/20 p-2 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm leading-tight">BUKU KERJA 2</h3>
+                            <p class="text-[10px] text-blue-100">Manajerial</p>
+                        </div>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col">
+                        <div class="flex justify-between items-end mb-3 pb-2 border-b border-gray-100">
+                            <span class="text-xs font-semibold text-gray-500">Status Kelengkapan:</span>
+                        </div>
+
+                        <ul class="text-[11px] text-gray-600 space-y-3 flex-1 overflow-y-auto pr-1" data-color="blue">
+                            <li class="flex justify-between items-center group cursor-pointer hover:bg-gray-50 rounded-lg px-1.5 -mx-1.5 py-0.5 transition-colors doc-pick-item" data-doc="Kalender Pendidikan" data-label="Kalender Pendidikan" onclick="lihatDokumen(this)">
+                                <span class="text-gray-400 truncate doc-label">Kalender Pendidikan</span>
+                                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            </li>
+                            <li class="flex justify-between items-center group cursor-pointer hover:bg-gray-50 rounded-lg px-1.5 -mx-1.5 py-0.5 transition-colors doc-pick-item" data-doc="Prota" data-label="Program Tahunan (Prota)" onclick="lihatDokumen(this)">
+                                <span class="text-gray-400 truncate doc-label">Program Tahunan (Prota)</span>
+                                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            </li>
+                            <li class="flex justify-between items-center group cursor-pointer hover:bg-gray-50 rounded-lg px-1.5 -mx-1.5 py-0.5 transition-colors doc-pick-item" data-doc="Promes" data-label="Program Semester (Promes)" onclick="lihatDokumen(this)">
+                                <span class="text-gray-400 truncate doc-label">Program Semester (Promes)</span>
+                                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            </li>
+                            <li class="flex justify-between items-center group cursor-pointer hover:bg-gray-50 rounded-lg px-1.5 -mx-1.5 py-0.5 transition-colors doc-pick-item" data-doc="Kode Etik" data-label="Kode Etik" onclick="lihatDokumen(this)">
+                                <span class="text-gray-400 truncate doc-label">Kode Etik</span>
+                                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            </li>
+                            <li class="flex justify-between items-center group cursor-pointer hover:bg-gray-50 rounded-lg px-1.5 -mx-1.5 py-0.5 transition-colors doc-pick-item" data-doc="Tata Tertib" data-label="Tata Tertib & Disiplin" onclick="lihatDokumen(this)">
+                                <span class="text-gray-400 truncate doc-label">Tata Tertib & Disiplin Madrasah</span>
+                                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- BUKU 3 (ORANGE) -->
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col h-[360px]">
+                    <div class="bg-amber-500 p-4 flex items-center gap-3 text-white">
+                        <div class="bg-white/20 p-2 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm leading-tight">BUKU KERJA 3</h3>
+                            <p class="text-[10px] text-amber-100">Evaluasi & Jurnal</p>
+                        </div>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col">
+                        <div class="flex justify-between items-end mb-3 pb-2 border-b border-gray-100">
+                            <span class="text-xs font-semibold text-gray-500">Status Kelengkapan:</span>
+                        </div>
+
+                        <ul class="text-[11px] text-gray-600 space-y-3 flex-1 overflow-y-auto pr-1" data-color="amber">
+                            <li class="flex justify-between items-center group cursor-pointer hover:bg-gray-50 rounded-lg px-1.5 -mx-1.5 py-0.5 transition-colors doc-pick-item" data-doc="Agenda Harian" data-label="Agenda Harian" onclick="lihatDokumen(this)">
+                                <span class="text-gray-400 truncate doc-label">Agenda Harian</span>
+                                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            </li>
+                            <li class="flex justify-between items-center group cursor-pointer hover:bg-gray-50 rounded-lg px-1.5 -mx-1.5 py-0.5 transition-colors doc-pick-item" data-doc="Absensi" data-label="Absensi" onclick="lihatDokumen(this)">
+                                <span class="text-gray-400 truncate doc-label">Absensi</span>
+                                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            </li>
+                            <li class="flex justify-between items-center group cursor-pointer hover:bg-gray-50 rounded-lg px-1.5 -mx-1.5 py-0.5 transition-colors doc-pick-item" data-doc="Jurnal Kelas" data-label="Jurnal Kelas" onclick="lihatDokumen(this)">
+                                <span class="text-gray-400 truncate doc-label">Jurnal Kelas</span>
+                                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            </li>
+                            <li class="flex justify-between items-center group cursor-pointer hover:bg-gray-50 rounded-lg px-1.5 -mx-1.5 py-0.5 transition-colors doc-pick-item" data-doc="Daftar Nilai" data-label="Daftar Nilai" onclick="lihatDokumen(this)">
+                                <span class="text-gray-400 truncate doc-label">Daftar Nilai</span>
+                                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            </li>
+                            <li class="flex justify-between items-center group cursor-pointer hover:bg-gray-50 rounded-lg px-1.5 -mx-1.5 py-0.5 transition-colors doc-pick-item" data-doc="Taraf Serap & Analisis" data-label="Taraf Serap & Analisis Hasil Belajar" onclick="lihatDokumen(this)">
+                                <span class="text-gray-400 truncate doc-label">Taraf Serap & Analisis</span>
+                                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            </li>
+                            <li class="flex justify-between items-center group cursor-pointer hover:bg-gray-50 rounded-lg px-1.5 -mx-1.5 py-0.5 transition-colors doc-pick-item" data-doc="Remedi / Pengayaan" data-label="Program Remedi / Pengayaan" onclick="lihatDokumen(this)">
+                                <span class="text-gray-400 truncate doc-label">Program Remedi / Pengayaan</span>
+                                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- BUKU 4 (PURPLE) -->
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col h-[360px]">
+                    <div class="bg-purple-500 p-4 flex items-center gap-3 text-white">
+                        <div class="bg-white/20 p-2 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H15M9 11l3 3L22 4" /></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm leading-tight">BUKU KERJA 4</h3>
+                            <p class="text-[10px] text-purple-100">Pengembangan Profesi</p>
+                        </div>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col">
+                        <div class="flex justify-between items-end mb-3 pb-2 border-b border-gray-100">
+                            <span class="text-xs font-semibold text-gray-500">Status Kelengkapan:</span>
+                        </div>
+
+                        <ul class="text-[11px] text-gray-600 space-y-3 flex-1 overflow-y-auto pr-1" data-color="purple">
+                            <li class="flex justify-between items-center group cursor-pointer hover:bg-gray-50 rounded-lg px-1.5 -mx-1.5 py-0.5 transition-colors doc-pick-item" data-doc="EDG" data-label="Evaluasi Diri Guru (EDG)" onclick="lihatDokumen(this)">
+                                <span class="text-gray-400 truncate doc-label">Evaluasi Diri Guru (EDG)</span>
+                                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            </li>
+                            <li class="flex justify-between items-center group cursor-pointer hover:bg-gray-50 rounded-lg px-1.5 -mx-1.5 py-0.5 transition-colors doc-pick-item" data-doc="Laporan Tindak Lanjut" data-label="Laporan Tindak Lanjut" onclick="lihatDokumen(this)">
+                                <span class="text-gray-400 truncate doc-label">Laporan Tindak Lanjut</span>
+                                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            </li>
+                            <li class="flex justify-between items-center group cursor-pointer hover:bg-gray-50 rounded-lg px-1.5 -mx-1.5 py-0.5 transition-colors doc-pick-item" data-doc="Diklat & Workshop" data-label="Diklat & Workshop" onclick="lihatDokumen(this)">
+                                <span class="text-gray-400 truncate doc-label">Diklat & Workshop</span>
+                                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            </li>
+                            <li class="flex justify-between items-center group cursor-pointer hover:bg-gray-50 rounded-lg px-1.5 -mx-1.5 py-0.5 transition-colors doc-pick-item" data-doc="Karya Inovatif" data-label="Karya Inovatif" onclick="lihatDokumen(this)">
+                                <span class="text-gray-400 truncate doc-label">Karya Inovatif</span>
+                                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL POP-UP UPLOAD -->
+    <div id="uploadModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl transform scale-95 transition-transform" id="uploadModalContent">
+            <div class="flex justify-between items-center mb-5 border-b border-gray-100 pb-3">
+                <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+                    Upload Dokumen Administrasi
+                </h2>
+                <button onclick="tutupModalUpload()" class="text-gray-400 hover:text-red-500 transition bg-gray-50 hover:bg-red-50 p-1.5 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+
+            <form id="uploadForm" onsubmit="prosesUpload(event)">
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">1. Pilih Buku Kerja</label>
+                    <div class="grid grid-cols-4 gap-2" id="bukuKerjaPicker"></div>
+
+                    <div class="mt-4 hidden" id="jenisDokumenWrapper">
+                        <label class="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">2. Pilih Jenis Dokumen</label>
+                        <div class="flex flex-wrap gap-2" id="jenisDokumenPicker"></div>
+                    </div>
+
+                    <!-- Select asli disembunyikan, tetap dipakai sebagai penyimpan nilai terpilih -->
+                    <select id="dokumenKategori" class="hidden">
+                        <option value="">-- Pilih Buku & Jenis Dokumen --</option>
+                        <optgroup label="BUKU KERJA 1 (Perangkat Inti)">
+                            <option value="SK Pembagian Tugas">SK Pembagian Tugas Mengajar</option>
+                            <option value="CP">Capaian Pembelajaran (CP)</option>
+                            <option value="ATP">Alur Tujuan Pembelajaran (ATP)</option>
+                            <option value="Modul Ajar">Modul Ajar</option>
+                            <option value="KKTP">KKTP / KKM</option>
+                        </optgroup>
+                        <optgroup label="BUKU KERJA 2 (Manajerial)">
+                            <option value="Kalender Pendidikan">Kalender Pendidikan</option>
+                            <option value="Prota">Program Tahunan (Prota)</option>
+                            <option value="Promes">Program Semester (Promes)</option>
+                            <option value="Kode Etik">Kode Etik</option>
+                            <option value="Tata Tertib">Tata Tertib & Disiplin Madrasah</option>
+                        </optgroup>
+                        <optgroup label="BUKU KERJA 3 (Evaluasi & Jurnal)">
+                            <option value="Agenda Harian">Agenda Harian</option>
+                            <option value="Absensi">Absensi</option>
+                            <option value="Jurnal Kelas">Jurnal Kelas</option>
+                            <option value="Daftar Nilai">Daftar Nilai</option>
+                            <option value="Taraf Serap & Analisis">Taraf Serap & Analisis Hasil Belajar</option>
+                            <option value="Remedi / Pengayaan">Program Remedi / Pengayaan</option>
+                        </optgroup>
+                        <optgroup label="BUKU KERJA 4 (Profesi)">
+                            <option value="EDG">Evaluasi Diri Guru (EDG)</option>
+                            <option value="Laporan Tindak Lanjut">Laporan Tindak Lanjut</option>
+                            <option value="Diklat & Workshop">Diklat & Workshop</option>
+                            <option value="Karya Inovatif">Karya Inovatif</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Pilih File (PDF/Word/Excel)</label>
+                    <input type="file" id="fileUpload" required class="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 cursor-pointer border border-gray-200 rounded-lg bg-gray-50 transition">
+                </div>
+
+                <button type="submit" id="btnUploadSubmit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm transition-colors shadow-md flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                    Mulai Upload
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL POP-UP LIHAT DOKUMEN -->
+    <div id="viewDocModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl transform scale-95 transition-transform" id="viewDocModalContent">
+            <div class="flex justify-between items-center mb-5 border-b border-gray-100 pb-3">
+                <h2 id="viewDocTitle" class="text-lg font-bold text-gray-800 flex items-center gap-2 pr-4 truncate">
+                    Nama Dokumen
+                </h2>
+                <button onclick="tutupModalLihatDokumen()" class="text-gray-400 hover:text-red-500 transition bg-gray-50 hover:bg-red-50 p-1.5 rounded-lg shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div id="viewDocBody">
+                <!-- Diisi secara dinamis oleh fungsi bukaModalLihatDokumen() -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- =========================================================
+     VIEW 3: DASHBOARD PENGAWAS
+     ========================================================= -->
+<div id="view-pengawas" class="hidden-view dash-body h-screen w-full flex overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <aside class="w-16 md:w-20 bg-emerald-900 border-r border-emerald-800 flex flex-col items-center py-6 shadow-xl z-20 shrink-0">
+        <div class="w-10 h-10 bg-white rounded-lg p-1">
+            <img src="Logo Kemenag.png" alt="Logo" class="w-full h-full object-contain" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/f/f2/Lambang_Kementerian_Agama.svg'">
+        </div>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <main class="flex-1 flex flex-col h-screen relative">
+
+        <!-- HEADER PENGAWAS -->
+        <header class="bg-white h-20 border-b border-gray-200 px-6 flex items-center justify-between shrink-0 shadow-sm relative z-10">
+            <div class="flex items-center gap-6 divide-x divide-gray-200">
+                <div class="flex items-center gap-3">
+                    <img id="pengawas-foto-header" src="https://ui-avatars.com/api/?name=Pengawas&background=047857&color=fff" alt="Pengawas" class="w-11 h-11 rounded-full object-cover border-2 border-emerald-500">
+                    <div>
+                        <h2 id="pengawas-nama-header" class="text-sm font-black text-gray-800">Anang Maulana</h2>
+                        <p class="text-[11px] font-bold text-emerald-600 uppercase tracking-wider">Pengawas Madrasah</p>
+                    </div>
+                </div>
+
+                <div class="px-6 hidden md:block">
+                    <p class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-0.5">Wilayah Binaan</p>
+                    <p class="text-xs font-semibold text-gray-700">Kabupaten Kuningan</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-amber-200">Mode Pantauan</span>
+                <a href="#" onclick="handleLogout(); return false;" class="text-xs font-semibold text-red-500 hover:text-red-700 flex items-center gap-1 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200 shadow-sm transition">
+                    Keluar
+                </a>
+            </div>
+        </header>
+
+        <!-- CONTENT SCROLLABLE -->
+        <div class="dash-scroll flex-1 overflow-y-auto p-6 lg:p-8 bg-gray-50 relative z-0">
+
+            <!-- PANEL 1: DAFTAR MADRASAH (Tampil Awal) -->
+            <div id="panel-madrasah" class="block transition-opacity duration-300">
+                <div class="mb-6">
+                    <h1 class="text-xl font-black text-gray-800 uppercase tracking-wide">Daftar Madrasah Binaan</h1>
+                    <p class="text-xs text-gray-500 mt-1">Pilih madrasah untuk memantau kelengkapan administrasi guru.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Kartu Madrasah 1 -->
+                    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow p-5 cursor-pointer group" onclick="bukaDaftarGuru('MTsN 1 Kuningan')">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">MTsN 1 Kuningan</h3>
+                                <p class="text-[11px] font-medium text-emerald-600">Total: 24 Guru</p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-[10px] font-bold text-gray-500 mb-1.5 uppercase">
+                                <span>Rata-rata Kelengkapan</span>
+                                <span class="text-emerald-600">78%</span>
+                            </div>
+                            <div class="w-full bg-gray-100 rounded-full h-2">
+                                <div class="bg-emerald-500 h-2 rounded-full" style="width: 78%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kartu Madrasah 2 -->
+                    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow p-5 cursor-pointer group" onclick="bukaDaftarGuru('MIN 2 Kuningan')">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">MIN 2 Kuningan</h3>
+                                <p class="text-[11px] font-medium text-emerald-600">Total: 15 Guru</p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-[10px] font-bold text-gray-500 mb-1.5 uppercase">
+                                <span>Rata-rata Kelengkapan</span>
+                                <span class="text-amber-500">62%</span>
+                            </div>
+                            <div class="w-full bg-gray-100 rounded-full h-2">
+                                <div class="bg-amber-400 h-2 rounded-full" style="width: 62%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL 2: DAFTAR GURU (Muncul saat Madrasah diklik) -->
+            <div id="panel-guru" class="hidden transition-opacity duration-300">
+                <div class="flex items-center gap-3 mb-6">
+                    <button onclick="kembaliKeMadrasah()" class="text-gray-500 hover:text-gray-800 bg-white p-2 rounded-lg border border-gray-200 shadow-sm transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                    </button>
+                    <div>
+                        <h1 class="text-xl font-black text-gray-800 uppercase tracking-wide" id="judul-madrasah">Daftar Guru</h1>
+                        <p class="text-xs text-gray-500 mt-1">Klik tombol pantau untuk masuk ke dashboard milik guru.</p>
+                    </div>
+                </div>
+
+                <!-- Tabel Guru -->
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-500 text-[10px] uppercase tracking-wider">
+                                    <th class="p-4 font-bold border-b border-gray-200">Nama Guru</th>
+                                    <th class="p-4 font-bold border-b border-gray-200">Mata Pelajaran</th>
+                                    <th class="p-4 font-bold border-b border-gray-200 text-center">Buku 1</th>
+                                    <th class="p-4 font-bold border-b border-gray-200 text-center">Buku 2</th>
+                                    <th class="p-4 font-bold border-b border-gray-200 text-center">Buku 3</th>
+                                    <th class="p-4 font-bold border-b border-gray-200 text-center">Buku 4</th>
+                                    <th class="p-4 font-bold border-b border-gray-200 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm divide-y divide-gray-100">
+                                <!-- Guru 1 -->
+                                <tr class="hover:bg-emerald-50/50 transition-colors">
+                                    <td class="p-4 font-bold text-gray-800 flex items-center gap-3">
+                                        <img src="https://ui-avatars.com/api/?name=Budi+Santoso&background=f3f4f6" class="w-8 h-8 rounded-full">
+                                        Budi Santoso, S.Pd
+                                    </td>
+                                    <td class="p-4 text-gray-600 text-xs font-semibold">Matematika / VII</td>
+                                    <td class="p-4 text-center"><span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-bold">95%</span></td>
+                                    <td class="p-4 text-center"><span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-bold">100%</span></td>
+                                    <td class="p-4 text-center"><span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-[10px] font-bold">60%</span></td>
+                                    <td class="p-4 text-center"><span class="bg-red-100 text-red-700 px-2 py-1 rounded text-[10px] font-bold">20%</span></td>
+                                    <td class="p-4 text-right">
+                                        <button onclick="pantauDashboard('Budi Santoso, S.Pd', 'Matematika / VII', 'MTsN 1 Kuningan')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5 ml-auto">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                            Pantau
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- Guru 2 -->
+                                <tr class="hover:bg-emerald-50/50 transition-colors">
+                                    <td class="p-4 font-bold text-gray-800 flex items-center gap-3">
+                                        <img src="https://ui-avatars.com/api/?name=Siti+Aminah&background=f3f4f6" class="w-8 h-8 rounded-full">
+                                        Siti Aminah, M.Pd
+                                    </td>
+                                    <td class="p-4 text-gray-600 text-xs font-semibold">Fiqih / VII</td>
+                                    <td class="p-4 text-center"><span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-bold">100%</span></td>
+                                    <td class="p-4 text-center"><span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-bold">100%</span></td>
+                                    <td class="p-4 text-center"><span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-bold">90%</span></td>
+                                    <td class="p-4 text-center"><span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-bold">85%</span></td>
+                                    <td class="p-4 text-right">
+                                        <button onclick="pantauDashboard('Siti Aminah, M.Pd', 'Fiqih / VII', 'MTsN 1 Kuningan')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5 ml-auto">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                            Pantau
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<!-- =========================================================
+     SCRIPT: NAVIGASI & LOGIKA TERPUSAT (SPA, tanpa reload)
+     ========================================================= -->
+<script>
+    // ---- State sesi (in-memory, hilang saat tab ditutup) ----
+    let session = { role: null, name: null, mapel: null, madrasah: null };
+    let pantauanAktif = false;
+
+    // ---- Penyimpanan dokumen per-guru (in-memory) ----
+    // Struktur: dokumenData['Nama Guru']['Kode Dokumen'] = { fileName, type, url, uploadedAt, sizeText }
+    let dokumenData = {};
+    let guruAktifKey = null;
+
+    const SEMUA_DOC_KEYS = [
+        'SK Pembagian Tugas', 'CP', 'ATP', 'Modul Ajar', 'KKTP',
+        'Kalender Pendidikan', 'Prota', 'Promes', 'Kode Etik', 'Tata Tertib',
+        'Agenda Harian', 'Absensi', 'Jurnal Kelas', 'Daftar Nilai', 'Taraf Serap & Analisis', 'Remedi / Pengayaan',
+        'EDG', 'Laporan Tindak Lanjut', 'Diklat & Workshop', 'Karya Inovatif'
+    ];
+
+    const viewLogin = document.getElementById('view-login');
+    const viewGuru = document.getElementById('view-guru');
+    const viewPengawas = document.getElementById('view-pengawas');
+
+    function sembunyikanSemuaView() {
+        viewLogin.classList.add('hidden-view');
+        viewGuru.classList.add('hidden-view');
+        viewPengawas.classList.add('hidden-view');
+    }
+
+    // ---- VIEW: LOGIN ----
+    function selectRole(role) {
+        const options = document.querySelectorAll('#view-login .role-option');
+        const radios = document.querySelectorAll('#view-login input[name="role"]');
+
+        options.forEach((opt, index) => {
+            opt.classList.remove('active');
+            if (radios[index].value === role) {
+                opt.classList.add('active');
+                radios[index].checked = true;
+            }
+        });
+
+        const guruFields = document.getElementById('guruFields');
+        const pengawasFields = document.getElementById('pengawasFields');
+        const guruInputs = guruFields.querySelectorAll('input');
+        const pengawasInput = document.getElementById('namaPengawas');
+
+        // Field yang sedang disembunyikan tidak boleh "required", agar tidak
+        // memblokir submit form (browser tidak bisa fokus ke field yang tersembunyi).
+        if (role === 'guru') {
+            guruFields.classList.remove('hidden');
+            pengawasFields.classList.add('hidden');
+            guruInputs.forEach(el => el.required = true);
+            pengawasInput.required = false;
+        } else {
+            guruFields.classList.add('hidden');
+            pengawasFields.classList.remove('hidden');
+            guruInputs.forEach(el => el.required = false);
+            pengawasInput.required = true;
+        }
+    }
+
+    function handleLogin(event) {
+        event.preventDefault();
+
+        const selectedRole = document.querySelector('#view-login input[name="role"]:checked');
+
+        if (!selectedRole) {
+            alert('Silakan pilih peran Anda terlebih dahulu!');
+            return;
+        }
+
+        session.role = selectedRole.value;
+
+        if (session.role === 'guru') {
+            const namaGuru = document.getElementById('namaGuru').value.trim();
+            const mapelGuru = document.getElementById('mapelGuru').value.trim();
+            const madrasahGuru = document.getElementById('madrasahGuru').value.trim();
+
+            if (!namaGuru || !mapelGuru || !madrasahGuru) {
+                alert('Mohon lengkapi Nama Guru, Mata Pelajaran, dan Nama Madrasah.');
+                return;
+            }
+
+            session.name = namaGuru;
+            session.mapel = mapelGuru;
+            session.madrasah = madrasahGuru;
+            masukSebagaiGuru();
+        } else if (session.role === 'pengawas') {
+            const namaPengawas = document.getElementById('namaPengawas').value.trim();
+
+            if (!namaPengawas) {
+                alert('Mohon isi Nama Pengawas.');
+                return;
+            }
+
+            session.name = namaPengawas;
+            masukSebagaiPengawas();
+        }
+    }
+
+    function handleLogout() {
+        session = { role: null, name: null, mapel: null, madrasah: null };
+        pantauanAktif = false;
+        dokumenData = {};
+        guruAktifKey = null;
+
+        document.getElementById('loginForm').reset();
+        selectRole('guru');
+
+        sembunyikanSemuaView();
+        viewLogin.classList.remove('hidden-view');
+    }
+
+    // ---- VIEW: DASHBOARD GURU ----
+    function masukSebagaiGuru() {
+        exitPantauanMode();
+        guruAktifKey = session.name || 'Guru';
+        document.getElementById('guru-nama-header').innerText = session.name;
+        document.getElementById('guru-jabatan-header').innerText = 'Guru Mata Pelajaran';
+        document.getElementById('guru-mapel-header').innerText = session.mapel || '-';
+        document.getElementById('guru-madrasah-header').innerText = session.madrasah || '-';
+        document.getElementById('profile-pic').src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(session.name) + '&background=10b981&color=fff';
+
+        renderStatusSemuaDokumen();
+        sembunyikanSemuaView();
+        viewGuru.classList.remove('hidden-view');
+    }
+
+    // ---- DATA & LOGIKA KOTAK PILIHAN BUKU KERJA (1-4) ----
+    const BUKU_KERJA_DATA = {
+        '1': {
+            label: 'BUKU KERJA 1', subtitle: 'Perangkat Inti',
+            hex: '#10b981', hexDark: '#047857', tint: '#ecfdf5', fade: 'rgba(16,185,129,0.45)',
+            icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>',
+            items: [
+                { value: 'SK Pembagian Tugas', text: 'SK Pembagian Tugas Mengajar' },
+                { value: 'CP', text: 'Capaian Pembelajaran (CP)' },
+                { value: 'ATP', text: 'Alur Tujuan Pembelajaran (ATP)' },
+                { value: 'Modul Ajar', text: 'Modul Ajar' },
+                { value: 'KKTP', text: 'KKTP / KKM' },
+            ]
+        },
+        '2': {
+            label: 'BUKU KERJA 2', subtitle: 'Manajerial',
+            hex: '#3b82f6', hexDark: '#1d4ed8', tint: '#eff6ff', fade: 'rgba(59,130,246,0.45)',
+            icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>',
+            items: [
+                { value: 'Kalender Pendidikan', text: 'Kalender Pendidikan' },
+                { value: 'Prota', text: 'Program Tahunan (Prota)' },
+                { value: 'Promes', text: 'Program Semester (Promes)' },
+                { value: 'Kode Etik', text: 'Kode Etik' },
+                { value: 'Tata Tertib', text: 'Tata Tertib & Disiplin Madrasah' },
+            ]
+        },
+        '3': {
+            label: 'BUKU KERJA 3', subtitle: 'Evaluasi & Jurnal',
+            hex: '#f59e0b', hexDark: '#b45309', tint: '#fffbeb', fade: 'rgba(245,158,11,0.45)',
+            icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>',
+            items: [
+                { value: 'Agenda Harian', text: 'Agenda Harian' },
+                { value: 'Absensi', text: 'Absensi' },
+                { value: 'Jurnal Kelas', text: 'Jurnal Kelas' },
+                { value: 'Daftar Nilai', text: 'Daftar Nilai' },
+                { value: 'Taraf Serap & Analisis', text: 'Taraf Serap & Analisis Hasil Belajar' },
+                { value: 'Remedi / Pengayaan', text: 'Program Remedi / Pengayaan' },
+            ]
+        },
+        '4': {
+            label: 'BUKU KERJA 4', subtitle: 'Profesi',
+            hex: '#8b5cf6', hexDark: '#6d28d9', tint: '#f5f3ff', fade: 'rgba(139,92,246,0.45)',
+            icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H15M9 11l3 3L22 4"/></svg>',
+            items: [
+                { value: 'EDG', text: 'Evaluasi Diri Guru (EDG)' },
+                { value: 'Laporan Tindak Lanjut', text: 'Laporan Tindak Lanjut' },
+                { value: 'Diklat & Workshop', text: 'Diklat & Workshop' },
+                { value: 'Karya Inovatif', text: 'Karya Inovatif' },
+            ]
+        }
+    };
+
+    // Membangun 4 kotak pilihan Buku Kerja di dalam modal upload
+    function bangunBukuKerjaPicker() {
+        const wrap = document.getElementById('bukuKerjaPicker');
+        wrap.innerHTML = Object.keys(BUKU_KERJA_DATA).map(bukuId => {
+            const d = BUKU_KERJA_DATA[bukuId];
+            return `
+                <div class="buku-pick-card" data-buku="${bukuId}"
+                     style="--buku-color:${d.hex}; --buku-color-dark:${d.hexDark}; --buku-color-tint:${d.tint}; --buku-color-fade:${d.fade};"
+                     onclick="pilihBukuKerja('${bukuId}')">
+                    <div class="buku-pick-check" style="background:${d.hex};">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                    <div class="buku-pick-icon" style="color:${d.hex};">${d.icon}</div>
+                    <span class="buku-pick-title">${d.label}</span>
+                    <span class="buku-pick-sub">${d.subtitle}</span>
+                </div>`;
+        }).join('');
+    }
+
+    // Klik/sentuh salah satu kotak Buku Kerja -> tampil pilihan jenis dokumennya
+    function pilihBukuKerja(bukuId) {
+        document.querySelectorAll('.buku-pick-card').forEach(el => {
+            el.classList.remove('selected', 'pulse-anim');
+        });
+        const card = document.querySelector(`.buku-pick-card[data-buku="${bukuId}"]`);
+        if (!card) return;
+        card.classList.add('selected');
+        // trigger ulang animasi pulse setiap kali dipilih
+        void card.offsetWidth;
+        card.classList.add('pulse-anim');
+
+        document.getElementById('dokumenKategori').value = '';
+        renderJenisDokumenPicker(bukuId);
+        document.getElementById('jenisDokumenWrapper').classList.remove('hidden');
+    }
+
+    // Menampilkan pilihan jenis dokumen (pill) sesuai Buku Kerja yang dipilih
+    function renderJenisDokumenPicker(bukuId) {
+        const data = BUKU_KERJA_DATA[bukuId];
+        const wrap = document.getElementById('jenisDokumenPicker');
+        wrap.innerHTML = data.items.map(item => `
+            <button type="button" class="jenis-pick-pill" data-value="${item.value}" onclick="pilihJenisDokumen('${bukuId}', this)">${item.text}</button>
+        `).join('');
+    }
+
+    // Klik/sentuh salah satu jenis dokumen -> menjadi nilai final yang diupload
+    function pilihJenisDokumen(bukuId, btnEl) {
+        const data = BUKU_KERJA_DATA[bukuId];
+        const value = btnEl.getAttribute('data-value');
+        document.getElementById('dokumenKategori').value = value;
+        document.querySelectorAll('#jenisDokumenPicker .jenis-pick-pill').forEach(btn => {
+            if (btn === btnEl) {
+                btn.classList.add('selected');
+                btn.style.background = data.hex;
+                btn.style.borderColor = data.hex;
+            } else {
+                btn.classList.remove('selected');
+                btn.style.background = '';
+                btn.style.borderColor = '';
+            }
+        });
+    }
+
+    // Cari Buku Kerja mana pemilik suatu value dokumen (dipakai saat "Ganti Dokumen")
+    function cariBukuKerjaByValue(value) {
+        for (const bukuId in BUKU_KERJA_DATA) {
+            if (BUKU_KERJA_DATA[bukuId].items.some(item => item.value === value)) return bukuId;
+        }
+        return null;
+    }
+
+    // Reset tampilan kotak Buku Kerja & pill jenis dokumen ke kondisi awal
+    function resetPemilihanKategori() {
+        document.querySelectorAll('.buku-pick-card').forEach(el => el.classList.remove('selected', 'pulse-anim'));
+        document.getElementById('jenisDokumenWrapper').classList.add('hidden');
+        document.getElementById('jenisDokumenPicker').innerHTML = '';
+        document.getElementById('dokumenKategori').value = '';
+    }
+
+    // "BUAT ADM SEKARANG" membuka modal upload agar guru bisa memilih
+    // jenis dokumen (kartu) mana yang ingin diunggah sekarang.
+    function buatAdmSekarang() {
+        bukaModalUpload();
+    }
+
+    function bukaModalUpload(preselectKategori) {
+        if (pantauanAktif) return; // Pengawas tidak bisa upload atas nama guru
+        const modal = document.getElementById('uploadModal');
+        const content = document.getElementById('uploadModalContent');
+        resetPemilihanKategori();
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+            if (preselectKategori) {
+                const bukuId = cariBukuKerjaByValue(preselectKategori);
+                if (bukuId) {
+                    pilihBukuKerja(bukuId);
+                    const btnEl = document.querySelector(`#jenisDokumenPicker .jenis-pick-pill[data-value="${preselectKategori}"]`);
+                    if (btnEl) pilihJenisDokumen(bukuId, btnEl);
+                }
+            }
+        }, 10);
+    }
+    function tutupModalUpload() {
+        const modal = document.getElementById('uploadModal');
+        const content = document.getElementById('uploadModalContent');
+        content.classList.remove('scale-100');
+        content.classList.add('scale-95');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            resetPemilihanKategori();
+        }, 200);
+    }
+    function perbaruiStatusUI(namaDokumenValue) {
+        const liItem = document.querySelector(`#view-guru li[data-doc="${CSS.escape(namaDokumenValue)}"]`);
+        if (liItem) {
+            const labelText = liItem.getAttribute('data-label') || namaDokumenValue;
+            liItem.innerHTML = `
+                <span class="text-gray-800 font-medium truncate doc-label">${labelText}</span>
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <button class="text-blue-500 hover:text-blue-700 hover:scale-110 transition-transform" title="Lihat Dokumen"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg></button>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+            `;
+        }
+    }
+
+    // Kembalikan semua item dokumen di dashboard guru ke tampilan default
+    // (belum diunggah), lalu terapkan status untuk dokumen yang memang
+    // sudah ada di dokumenData milik guru yang sedang aktif.
+    function resetTampilanDokumen() {
+        SEMUA_DOC_KEYS.forEach(key => {
+            const liItem = document.querySelector(`#view-guru li[data-doc="${CSS.escape(key)}"]`);
+            if (!liItem) return;
+            const labelText = liItem.getAttribute('data-label') || key;
+            liItem.innerHTML = `
+                <span class="text-gray-400 truncate doc-label">${labelText}</span>
+                <div class="flex items-center gap-1.5 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+            `;
+        });
+    }
+
+    function renderStatusSemuaDokumen() {
+        resetTampilanDokumen();
+        const dataGuruAktif = dokumenData[guruAktifKey];
+        if (!dataGuruAktif) return;
+        Object.keys(dataGuruAktif).forEach(key => perbaruiStatusUI(key));
+    }
+
+    function prosesUpload(event) {
+        event.preventDefault();
+        const btn = document.getElementById('btnUploadSubmit');
+        const selectKategori = document.getElementById('dokumenKategori');
+        const valueKategori = selectKategori.value;
+        const fileInput = document.getElementById('fileUpload');
+        const file = fileInput.files[0];
+
+        if (!valueKategori) {
+            alert('Silakan pilih Buku Kerja dan Jenis Dokumen terlebih dahulu.');
+            return;
+        }
+        if (!file) {
+            alert('Silakan pilih file yang akan diunggah.');
+            return;
+        }
+        const teksKategori = selectKategori.options[selectKategori.selectedIndex].text;
+
+        const teksAsli = btn.innerHTML;
+        btn.innerHTML = `Mengunggah...`;
+        btn.disabled = true;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            if (!dokumenData[guruAktifKey]) dokumenData[guruAktifKey] = {};
+            dokumenData[guruAktifKey][valueKategori] = {
+                fileName: file.name,
+                type: file.type,
+                url: e.target.result,
+                uploadedAt: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+                sizeText: (file.size / 1024).toFixed(0) + ' KB'
+            };
+
+            setTimeout(() => {
+                alert(`Dokumen berhasil ditambahkan ke direktori:\n${teksKategori}`);
+                perbaruiStatusUI(valueKategori);
+                document.getElementById('uploadForm').reset();
+                resetPemilihanKategori();
+                btn.innerHTML = teksAsli;
+                btn.disabled = false;
+                tutupModalUpload();
+            }, 600);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // ---- MODAL LIHAT DOKUMEN (klik kartu dokumen) ----
+    function lihatDokumen(liElement) {
+        const key = liElement.getAttribute('data-doc');
+        const label = liElement.getAttribute('data-label') || key;
+
+        // Animasi singkat saat disentuh/diklik, lalu kembali normal
+        // (warna tetap muncul hanya saat kursor/jari benar-benar menyentuh via :hover)
+        liElement.classList.remove('pulse-anim');
+        void liElement.offsetWidth; // reflow agar animasi bisa diulang
+        liElement.classList.add('pulse-anim');
+        setTimeout(() => liElement.classList.remove('pulse-anim'), 500);
+
+        bukaModalLihatDokumen(key, label);
+    }
+
+    function bukaModalLihatDokumen(key, label) {
+        const modal = document.getElementById('viewDocModal');
+        const content = document.getElementById('viewDocModalContent');
+        const titleEl = document.getElementById('viewDocTitle');
+        const bodyEl = document.getElementById('viewDocBody');
+        const data = (dokumenData[guruAktifKey] || {})[key];
+
+        titleEl.innerText = label;
+
+        if (data) {
+            let previewHtml;
+            if (data.type && data.type.startsWith('image/')) {
+                previewHtml = `<img src="${data.url}" class="max-h-[45vh] w-full object-contain mx-auto rounded-lg border border-gray-200 bg-gray-50" alt="${label}">`;
+            } else if (data.type === 'application/pdf') {
+                previewHtml = `<embed src="${data.url}" type="application/pdf" class="w-full h-[45vh] rounded-lg border border-gray-200" />`;
+            } else {
+                previewHtml = `
+                    <div class="flex flex-col items-center justify-center py-10 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 text-emerald-500 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                        <p class="text-sm font-semibold text-gray-700 px-4 text-center truncate w-full">${data.fileName}</p>
+                    </div>`;
+            }
+
+            bodyEl.innerHTML = `
+                ${previewHtml}
+                <div class="mt-4 text-[11px] text-gray-500 flex justify-between border-t border-gray-100 pt-3">
+                    <span>Diunggah: ${data.uploadedAt}</span>
+                    <span>${data.sizeText}</span>
+                </div>
+                <div class="mt-4 flex gap-2">
+                    <a href="${data.url}" download="${data.fileName}" class="flex-1 text-center bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-lg transition">Unduh Dokumen</a>
+                    ${!pantauanAktif ? `<button onclick="tutupModalLihatDokumen(); bukaModalUpload('${key}')" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold py-2.5 rounded-lg transition">Ganti Dokumen</button>` : ''}
+                </div>
+            `;
+        } else {
+            bodyEl.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-10 bg-red-50 rounded-xl border border-dashed border-red-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 text-red-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v3.75m0 3.75h.007M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <p class="text-sm font-semibold text-red-500">Dokumen belum diunggah</p>
+                </div>
+                ${!pantauanAktif ? `<button onclick="tutupModalLihatDokumen(); bukaModalUpload('${key}')" class="mt-4 w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-lg transition">Upload Sekarang</button>` : ''}
+            `;
+        }
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }, 10);
+    }
+
+    function tutupModalLihatDokumen() {
+        const modal = document.getElementById('viewDocModal');
+        const content = document.getElementById('viewDocModalContent');
+        content.classList.remove('scale-100');
+        content.classList.add('scale-95');
+        setTimeout(() => { modal.classList.add('hidden'); }, 200);
+    }
+
+    // ---- MODE PANTAUAN (Pengawas melihat dashboard seorang Guru) ----
+    function pantauDashboard(namaGuru, mapelGuru, namaMadrasah) {
+        pantauanAktif = true;
+        guruAktifKey = namaGuru;
+
+        document.getElementById('guru-nama-header').innerText = namaGuru;
+        document.getElementById('guru-jabatan-header').innerText = 'Guru Mata Pelajaran';
+        document.getElementById('guru-mapel-header').innerText = mapelGuru;
+        document.getElementById('guru-madrasah-header').innerText = namaMadrasah;
+        document.getElementById('profile-pic').src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(namaGuru) + '&background=10b981&color=fff';
+
+        document.getElementById('pengawasBanner').classList.remove('hidden-view');
+        document.getElementById('btnKeluarGuru').classList.add('hidden-view');
+        document.getElementById('btnKembaliPengawas').classList.remove('hidden-view');
+        document.getElementById('btnBuatAdm').classList.add('opacity-40', 'pointer-events-none');
+
+        renderStatusSemuaDokumen();
+        sembunyikanSemuaView();
+        viewGuru.classList.remove('hidden-view');
+    }
+
+    function exitPantauanMode() {
+        pantauanAktif = false;
+        document.getElementById('pengawasBanner').classList.add('hidden-view');
+        document.getElementById('btnKeluarGuru').classList.remove('hidden-view');
+        document.getElementById('btnKembaliPengawas').classList.add('hidden-view');
+        document.getElementById('btnBuatAdm').classList.remove('opacity-40', 'pointer-events-none');
+    }
+
+    function kembaliKePengawas() {
+        exitPantauanMode();
+        sembunyikanSemuaView();
+        viewPengawas.classList.remove('hidden-view');
+    }
+
+    // ---- VIEW: DASHBOARD PENGAWAS ----
+    function masukSebagaiPengawas() {
+        document.getElementById('pengawas-nama-header').innerText = session.name;
+        document.getElementById('pengawas-foto-header').src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(session.name) + '&background=047857&color=fff';
+
+        document.getElementById('panel-guru').classList.add('hidden');
+        document.getElementById('panel-madrasah').classList.remove('hidden');
+
+        sembunyikanSemuaView();
+        viewPengawas.classList.remove('hidden-view');
+    }
+
+    function bukaDaftarGuru(namaMadrasah) {
+        document.getElementById('panel-madrasah').classList.add('hidden');
+        document.getElementById('panel-guru').classList.remove('hidden');
+        document.getElementById('judul-madrasah').innerText = "Daftar Guru - " + namaMadrasah;
+    }
+
+    function kembaliKeMadrasah() {
+        document.getElementById('panel-guru').classList.add('hidden');
+        document.getElementById('panel-madrasah').classList.remove('hidden');
+    }
+
+    // ---- INISIALISASI ----
+    document.addEventListener('DOMContentLoaded', function() {
+        selectRole('guru');
+        bangunBukuKerjaPicker();
+    });
+
+    // Enter key support hanya aktif di layar login
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !viewLogin.classList.contains('hidden-view')) {
+            document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+        }
+    });
+</script>
+
+</body>
+</html>
